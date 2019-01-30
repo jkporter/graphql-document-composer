@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28516.95
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "graphql-document-composer", "graphql-document-composer\graphql-document-composer.njsproj", "{40EB928C-EC48-410E-AF65-C0B402CDD9B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40EB928C-EC48-410E-AF65-C0B402CDD9B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40EB928C-EC48-410E-AF65-C0B402CDD9B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40EB928C-EC48-410E-AF65-C0B402CDD9B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40EB928C-EC48-410E-AF65-C0B402CDD9B3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7B0B93E2-66E4-4E74-A5A6-035AE4D8988F}
+	EndGlobalSection
+EndGlobal

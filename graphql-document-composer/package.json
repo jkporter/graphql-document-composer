@@ -1,0 +1,25 @@
+{
+  "name": "graphql-document-composer",
+  "version": "0.0.0",
+  "description": "graphql-document-composer",
+  "main": "app.js",
+  "author": {
+    "name": "Jonathan Porter"
+  },
+  "bin": {
+    "gqlc": "./app.js"
+  },
+  "scripts": {
+    "prepublish": "tsc"
+  },
+  "devDependencies": {
+    "@types/graphql": "^14.0.5",
+    "@types/node": "^8.0.14",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "commander": "^2.19.0",
+    "dependency-graph": "^0.8.0",
+    "graphql": "^14.1.1"
+  }
+}
