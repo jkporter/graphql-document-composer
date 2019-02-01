@@ -1,13 +1,13 @@
 ﻿#!/usr/bin/env node
 import { extendSchema, buildASTSchema, printSchema } from 'graphql/utilities'
-import { parse, Source, isTypeSystemDefinitionNode, isTypeSystemExtensionNode, DirectiveDefinitionNode, TypeDefinitionNode, TypeExtensionNode, DocumentNode, isTypeDefinitionNode, TypeNode, NamedTypeNode } from 'graphql/language';
+import { parse, Source, isTypeSystemDefinitionNode, isTypeSystemExtensionNode, DirectiveDefinitionNode, TypeDefinitionNode, TypeExtensionNode, DocumentNode, isTypeDefinitionNode, TypeNode, NamedTypeNode, ListTypeNode, NonNullTypeNode } from 'graphql/language';
 import { GraphQLSchema } from 'graphql/type';
 import { DepGraph } from 'dependency-graph';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as program from 'commander';
 
-function directoryWalker(directory, done) {
+function directoryWalker(directory: string, done) {
     let results = [];
 
     fs.readdir(directory, function (err, list) {
@@ -129,7 +129,7 @@ function build(dir: string, output: string) {
         documents.forEach(documentA => {
             documents.forEach(documentB => {
                 if (documentA.loc.source.name !== documentB.loc.source.name && isDependentOn(documentA, documentB)) {
-                    console.log(`"${documentA.loc.source.name}" has a dependencey with "${documentB.loc.source.name}".`);
+                    console.log(`"${documentA.loc.source.name}" has a dependencey on "${documentB.loc.source.name}".`);
                     graph.addDependency(documentA.loc.source.name, documentB.loc.source.name);
                 }
             });
