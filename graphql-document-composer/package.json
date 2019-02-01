@@ -1,6 +1,6 @@
 {
   "name": "graphql-document-composer",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "graphql-document-composer",
   "main": "app.js",
   "author": {
