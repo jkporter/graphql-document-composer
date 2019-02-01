@@ -10,12 +10,12 @@
     "gqlc": "./app.js"
   },
   "scripts": {
-    "prepublish": "tsc"
+    "prepare": "tsc"
   },
   "devDependencies": {
     "@types/graphql": "^14.0.5",
     "@types/node": "^8.0.14",
-    "typescript": "^3.2.4"
+    "typescript": "^3.3.1"
   },
   "dependencies": {
     "commander": "^2.19.0",
