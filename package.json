@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@types/graphql": "^14.0.5",
-    "@types/node": "^8.0.14",
+    "@types/node": "^10.12.21",
     "typescript": "^3.3.1"
   },
   "dependencies": {

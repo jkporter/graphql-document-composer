@@ -96,7 +96,7 @@ function build(dir, output) {
     directoryWalker(dir, function (err, data) {
         if (err)
             throw err;
-        const sources = data.filter(fileName => fileName.toLowerCase().endsWith(".graphql")).map((fileName, index) => {
+        const sources = data.filter(fileFilter).map((fileName, index) => {
             const body = fs.readFileSync(fileName, 'utf8');
             return new language_1.Source(body, path.relative(dir, fileName));
         });
@@ -123,21 +123,24 @@ function build(dir, output) {
                 console.log(`Extending with ${document.loc.source.name}.`);
             return index == 0 ? utilities_1.buildASTSchema(document) : utilities_1.extendSchema(schema, document);
         }, null);
+        fs.mkdirSync(path.dirname(output), { recursive: true });
         fs.writeFileSync(output, utilities_1.printSchema(schema));
     });
 }
+const fileFilter = (fileName) => /^.*\.g(raph)?ql$/i.test(fileName);
 program
-    .version('0.0.0', '-v, --version')
+    .version('1.0.0', '-v, --version')
     .option('-s, --source <sourceDirectory>', 'Source directory.')
     .option('-o, --output <outputFilename>', 'Output filename.')
     .option('-w, --watch', 'Watch for changes and re-build.')
     .parse(process.argv);
+const start = () => build(program.source, program.output);
 if (program.watch) {
     fs.watch(program.source, { recursive: true }, (eventType, filename) => {
-        if (filename.toLowerCase().endsWith(".graphql"))
+        if (fileFilter(filename))
             return;
-        build(program.source, program.output);
+        start();
     });
 }
-build(program.source, program.output);
+start();
 //# sourceMappingURL=app.js.map

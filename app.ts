@@ -1,13 +1,25 @@
 ﻿#!/usr/bin/env node
 import { extendSchema, buildASTSchema, printSchema } from 'graphql/utilities'
-import { parse, Source, isTypeSystemDefinitionNode, isTypeSystemExtensionNode, DirectiveDefinitionNode, TypeDefinitionNode, TypeExtensionNode, DocumentNode, isTypeDefinitionNode, TypeNode, NamedTypeNode, ListTypeNode, NonNullTypeNode } from 'graphql/language';
+import {
+    parse,
+    Source,
+    isTypeSystemDefinitionNode,
+    isTypeSystemExtensionNode,
+    DirectiveDefinitionNode,
+    TypeDefinitionNode,
+    TypeExtensionNode,
+    DocumentNode,
+    isTypeDefinitionNode,
+    TypeNode,
+    NamedTypeNode
+} from 'graphql/language';
 import { GraphQLSchema } from 'graphql/type';
 import { DepGraph } from 'dependency-graph';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as program from 'commander';
 
-function directoryWalker(directory: string, done) {
+function directoryWalker(directory: string, done: (err: NodeJS.ErrnoException, list?: string[]) => void) {
     let results = [];
 
     fs.readdir(directory, function (err, list) {
@@ -110,17 +122,17 @@ function isDependentOn(documentA: DocumentNode, documentB: DocumentNode) {
 }
 
 function build(dir: string, output: string) {
-    directoryWalker(dir, function (err, data) {
+    directoryWalker(dir, function (err: any, data) {
         if (err)
             throw err;
 
-        const sources = data.filter(fileName => fileName.toLowerCase().endsWith(".graphql")).map((fileName, index) => {
+        const sources = data.filter(fileFilter).map((fileName, index) => {
             const body = fs.readFileSync(fileName, 'utf8');
             return new Source(body, path.relative(dir, fileName));
         });
 
         const graph = new DepGraph();
-        const documents = sources.map(source => parse(source));
+        const documents : DocumentNode[] = sources.map((source: string | Source) => parse(source));
         documents.forEach(document => {
             console.log(`Adding ${document.loc.source.name}`);
             graph.addNode(document.loc.source.name, document);
@@ -147,23 +159,28 @@ function build(dir: string, output: string) {
                 },
                 null);
 
+        fs.mkdirSync(path.dirname(output), { recursive: true });
         fs.writeFileSync(output, printSchema(schema));
     });
 }
 
+const fileFilter = (fileName: string) => /^.*\.g(raph)?ql$/i.test(fileName);
+
 program
-    .version('0.0.0', '-v, --version')
+    .version('1.0.0', '-v, --version')
     .option('-s, --source <sourceDirectory>', 'Source directory.')
     .option('-o, --output <outputFilename>', 'Output filename.')
     .option('-w, --watch', 'Watch for changes and re-build.')
     .parse(process.argv);
 
+const start = () => build(program.source, program.output);
+
 if (program.watch) {
     fs.watch(program.source, { recursive: true }, (eventType, filename) => {
-        if (filename.toLowerCase().endsWith(".graphql"))
+        if (fileFilter(filename))
             return;
-        build(program.source, program.output);
+        start();
     });
 }
 
-build(program.source, program.output);
+start();
