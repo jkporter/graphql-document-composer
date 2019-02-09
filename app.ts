@@ -82,9 +82,13 @@ function hasTypesFor(documentA: DocumentNode, documentB: DocumentNode): boolean 
     const directiveNames: string[] = [];
 
     for (const definition of documentA.definitions) {
-        if (isTypeDefinitionNode(definition)) {
+        if (isTypeDefinitionNode(definition) || definition.kind === "SchemaDefinition" || definition.kind === "SchemaExtension") {
             directiveNames.push(...definition.directives.map(directive => directive.name.value));
         }
+
+        if(definition.kind === "SchemaDefinition" || definition.kind === "SchemaExtension") {
+            typeNames.push(...definition.operationTypes.map(operationType => operationType.type.name.value));
+        } 
 
         if (definition.kind === "ObjectTypeDefinition" || definition.kind === "ObjectTypeExtension") {
             typeNames.push(...definition.interfaces.map(graphQLInterface => graphQLInterface.name.value));
