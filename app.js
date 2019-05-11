@@ -10,7 +10,7 @@ const path = require("path");
 const program = require("commander");
 function directoryWalker(directory, done) {
     let results = [];
-    fs.readdir(directory, function (err, list) {
+    fs.readdir(directory, (err, list) => {
         if (err) {
             return done(err);
         }
@@ -18,14 +18,14 @@ function directoryWalker(directory, done) {
         if (!pending) {
             return done(null, results);
         }
-        list.forEach(function (file) {
+        list.forEach((file) => {
             file = path.resolve(directory, file);
-            fs.stat(file, function (err, stat) {
+            fs.stat(file, (err, stat) => {
                 // if directory, execute a recursive call
                 if (stat && stat.isDirectory()) {
                     // add directory to array [comment if you need to remove the directories from the array]
                     results.push(file);
-                    directoryWalker(file, function (err, res) {
+                    directoryWalker(file, (err, res) => {
                         results = results.concat(res);
                         if (!--pending) {
                             done(null, results);
@@ -66,8 +66,11 @@ function hasTypesFor(documentA, documentB) {
     const typeNames = [];
     const directiveNames = [];
     for (const definition of documentA.definitions) {
-        if (language_1.isTypeDefinitionNode(definition)) {
+        if (language_1.isTypeDefinitionNode(definition) || definition.kind === "SchemaDefinition" || definition.kind === "SchemaExtension") {
             directiveNames.push(...definition.directives.map(directive => directive.name.value));
+        }
+        if (definition.kind === "SchemaDefinition" || definition.kind === "SchemaExtension") {
+            typeNames.push(...definition.operationTypes.map(operationType => operationType.type.name.value));
         }
         if (definition.kind === "ObjectTypeDefinition" || definition.kind === "ObjectTypeExtension") {
             typeNames.push(...definition.interfaces.map(graphQLInterface => graphQLInterface.name.value));
@@ -110,7 +113,7 @@ function isDependentOn(documentA, documentB) {
 }
 const fileFilter = (fileName) => /^.*\.g(raph)?ql$/i.test(fileName);
 function build(dir, output) {
-    directoryWalker(dir, function (err, data) {
+    directoryWalker(dir, (err, data) => {
         if (err) {
             throw err;
         }
@@ -153,7 +156,7 @@ function build(dir, output) {
             console.error("Validation Failed!");
             process.exit(1);
         }
-        console.log("Saving " + path.relative(".", output));
+        console.log(`Saving ${path.relative(".", output)}`);
         if (!fs.existsSync(output)) {
             fs.mkdirSync(path.dirname(output), { recursive: true });
         }

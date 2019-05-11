@@ -13,14 +13,14 @@
     "prepare": "tsc"
   },
   "devDependencies": {
-    "@types/graphql": "^14.0.5",
+    "@types/graphql": "^14.2.0",
     "@types/node": "^10.12.21",
-    "typescript": "^3.3.1",
-    "tslint": "^5.12.1"
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   },
   "dependencies": {
-    "commander": "^2.19.0",
+    "commander": "^2.20.0",
     "dependency-graph": "^0.8.0",
-    "graphql": "^14.1.1"
+    "graphql": "^14.3.0"
   }
 }

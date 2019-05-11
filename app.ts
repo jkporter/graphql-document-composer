@@ -23,23 +23,23 @@ import { GraphQLError } from "graphql";
 function directoryWalker(directory: string, done: (err: NodeJS.ErrnoException, list?: string[]) => void): void {
     let results: string[] = [];
 
-    fs.readdir(directory, function (err: NodeJS.ErrnoException, list: string[]): void {
+    fs.readdir(directory, (err: NodeJS.ErrnoException, list: string[]): void => {
         if (err) { return done(err); }
 
-        let pending: number = list.length;
+        let pending = list.length;
 
         if (!pending) { return done(null, results); }
 
-        list.forEach(function (file: string): void {
+        list.forEach((file: string): void => {
             file = path.resolve(directory, file);
 
-            fs.stat(file, function (err: NodeJS.ErrnoException, stat: fs.Stats): void {
+            fs.stat(file, (err: NodeJS.ErrnoException, stat: fs.Stats): void => {
                 // if directory, execute a recursive call
                 if (stat && stat.isDirectory()) {
                     // add directory to array [comment if you need to remove the directories from the array]
                     results.push(file);
 
-                    directoryWalker(file, function (err: NodeJS.ErrnoException, res: string[]): void {
+                    directoryWalker(file, (err: NodeJS.ErrnoException, res: string[]): void => {
                         results = results.concat(res);
                         if (!--pending) { done(null, results); }
                     });
@@ -60,8 +60,8 @@ function unwrap(typeNode: TypeNode): NamedTypeNode {
 function hasExtensionsFor(documentA: DocumentNode, documentB: DocumentNode): boolean {
     for (const typeSystemExtensionNode of documentA.definitions.filter(isTypeSystemExtensionNode)) {
         for (const typeSystemDefinitionNode of documentB.definitions.filter(isTypeSystemDefinitionNode)) {
-            const typeDefinitionMatch: RegExpExecArray = /^(.+)Definition$/.exec(typeSystemDefinitionNode.kind);
-            const typeExtensionMatch: RegExpExecArray = /^(.+)Extension$/.exec(typeSystemExtensionNode.kind);
+            const typeDefinitionMatch = /^(.+)Definition$/.exec(typeSystemDefinitionNode.kind);
+            const typeExtensionMatch = /^(.+)Extension$/.exec(typeSystemExtensionNode.kind);
 
             if (typeDefinitionMatch[1] === "Schema" && typeExtensionMatch[1] === "Schema") {
                 return true;
@@ -141,17 +141,17 @@ function isDependentOn(documentA: DocumentNode, documentB: DocumentNode): boolea
 const fileFilter: (fileName: string) => boolean = (fileName: string) => /^.*\.g(raph)?ql$/i.test(fileName);
 
 function build(dir: string, output: string): void {
-    directoryWalker(dir, function (err: NodeJS.ErrnoException, data: string[]): void {
+    directoryWalker(dir, (err: NodeJS.ErrnoException, data: string[]): void => {
         if (err) {
             throw err;
         }
 
-        const sources: Source[] = data.filter(fileFilter).map((fileName, index) => {
-            const body: string = fs.readFileSync(fileName, "utf8");
+        const sources = data.filter(fileFilter).map((fileName, index) => {
+            const body = fs.readFileSync(fileName, "utf8");
             return new Source(body, path.relative(dir, fileName));
         });
 
-        const graph: DepGraph<DocumentNode> = new DepGraph();
+        const graph: DepGraph<DocumentNode> = new DepGraph<DocumentNode>();
         const documents: DocumentNode[] = sources.map((source: string | Source) => parse(source));
         documents.forEach(document => {
             console.log(`Adding ${document.loc.source.name}`);
@@ -191,7 +191,7 @@ function build(dir: string, output: string): void {
             process.exit(1);
         }
 
-        console.log("Saving " + path.relative(".", output));
+        console.log(`Saving ${path.relative(".", output)}`);
         if (!fs.existsSync(output)) { fs.mkdirSync(path.dirname(output), { recursive: true }); }
         fs.writeFileSync(output, printSchema(schema));
     });
